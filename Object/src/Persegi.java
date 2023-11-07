@@ -16,4 +16,12 @@ public class Persegi {
         Aritmatika luas = new Aritmatika(sisi, sisi);
         return luas.getPerkalian();
     }
+
+    public double getSisi() {
+        return sisi;
+    }
+
+    public void setSisi(double sisi) {
+        this.sisi = sisi;
+    }
 }
