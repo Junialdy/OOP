@@ -11,3 +11,4 @@ Mempelajari konsep Program Berorientasi Objek pada bahasa Java. Terdapat class A
 - Accessor Method: Sebuah method yang digunakan untuk mengakses variable/atribut pada object/class
 - Mutator Method: Sebuah method yang digunakan untuk merubah variable/atribut pada object/class
 - Constructor : Sebuah method yang digunakan untuk menginisialisasi nilai awal pada object
+  note:
