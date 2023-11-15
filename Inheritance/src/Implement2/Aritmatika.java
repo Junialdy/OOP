@@ -1,7 +1,7 @@
-package alpha;
+package Implement2;
 
 public class Aritmatika {
-    protected double bil1, bil2;
+    private double bil1, bil2;
 
     // Constructor
     public Aritmatika() {
@@ -46,8 +46,8 @@ public class Aritmatika {
     }
 
     // Mutator
-    public void setBil1(double bil1) {
-        this.bil1 = bil1;
+    public void setBil1(double input1) {
+        bil1 = input1;
     }
 
     public void setBil2(double bil2) {

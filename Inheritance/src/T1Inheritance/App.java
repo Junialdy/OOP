@@ -4,7 +4,7 @@ package T1Inheritance;
 
 public class App {
     public static void main(String[] args) {
-        Student anna = new Student();
-        Student brian = new Student("Brian", "Jakarta");
+        // Student anna = new Student();
+        // Student brian = new Student("Brian", "Jakarta");
     }
 }
