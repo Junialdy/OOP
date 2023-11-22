@@ -3,9 +3,10 @@ package T3Polimorfisme;
 public class App {
     public static void main(String[] args) {
         Person ref;
-        Student vyctor = new Student("vyctor", "German");
-        Employee karion = new Employee("karion", "German");
+        Person vyctor = new Student("vyctor", "German");
+        Person karion = new Employee("karion", "German");
 
+        System.out.println();
         ref = vyctor;
         String temp = ref.getName();
         System.out.println(temp);
