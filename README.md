@@ -6,8 +6,9 @@ Diharapkan dengan melihat program yang ada direpository dapat lebih mengerti men
 ## Konsep
 - [x] Attribute, Method & Constructors
 - [x] Object & Class
-- [ ] Inheritance
-- [ ] Polymorphism
-- [ ] Abstraction
+- [x] Inheritance
+- [x] Polymorphism
+- [x] Abstraction
+- [x] Exceptions
 - [ ] Interface
 - [ ] Enums
