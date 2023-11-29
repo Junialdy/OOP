@@ -13,13 +13,6 @@ catch(Exception e) {
 }
 ```
 
-Output:
-
-```
-Something went wrong.
-The 'try catch' is finished.
-```
-
 #### Pernyataan **finally** memungkinkan kita mengeksekusi blok kode setelah try...catch apa pun hasilnya:
 
 example:
@@ -37,4 +30,10 @@ public class Main {
     }
   }
 }
+```
+Output:
+
+```
+Something went wrong.
+The 'try catch' is finished.
 ```
