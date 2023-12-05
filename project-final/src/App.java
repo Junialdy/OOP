@@ -8,16 +8,24 @@ public class App {
         int max = 20;
         Soal pertanyaan[] = new Soal[max];
         String jawabanUser[] = new String[max];
-        pertanyaan[0] = new PilihanGanda("Apa ibukota Indonesia?", "Jakarta", "Surabaya", "Bandung", "Medan",
-                "A");
-        pertanyaan[1] = new PilihanGanda("Berapakah hasil dari 5 + 3?", "7", "8", "9", "10", "B");
-        pertanyaan[3] = new PilihanGanda("Hewan apakah yang memiliki belalai panjang?", "Gajah", "Singa", "Kuda",
-                "Jerapah", "A");
-        pertanyaan[2] = new Essay("Berapa nilai percepatan gravitasi bumi? ... m/s²",
-                "9,8");
-        pertanyaan[4] = new Essay("Apa nama ilmu yang mempelajari planet-planet dan benda langit di luar angkasa?",
-                "Astronomi");
-        pertanyaan[5] = new BenarSalah("Apakah Kucing memiliki 5 kaki?", false);
+        pertanyaan[0] = new PilihanGanda("Apa tipe data untuk menyimpan bilangan pecahan (desimal) dalam Java?", "int",
+                "float", "double", "char",
+                "C");
+        pertanyaan[1] = new PilihanGanda("Bagaimana cara menginisialisasi array dalam Java?", "int arr[] = {1, 2, 3};",
+                "array arr = {1, 2, 3};", "int arr() = {1, 2, 3};", "array arr() = {1, 2, 3};", "A");
+        pertanyaan[2] = new PilihanGanda(
+                "Apa istilah yang digunakan untuk menggabungkan data dan metode dalam satu entitas dalam Java?",
+                "Encapsulation", "Inheritance", "Polymorphism", "Abstraction", "A");
+        pertanyaan[3] = new Essay("Apa keyword yang digunakan untuk membuat objek baru?",
+                "new");
+        pertanyaan[4] = new Essay("Apa keyword yang digunakan untuk membatasi inheritance?", "final");
+        pertanyaan[5] = new Essay("Apa keyword yang digunakan untuk melakukan inheritance?", "extends");
+        pertanyaan[6] = new BenarSalah("Tipe data String pada Java adalah tipe data primitif", false);
+        pertanyaan[7] = new BenarSalah(
+                "Blok finally dalam try-catch akan selalu dieksekusi, bahkan jika tidak ada exception", true);
+        pertanyaan[8] = new BenarSalah(
+                "Keyword static digunakan untuk mendeklarasikan variabel yang hanya dapat diakses melalui objek",
+                false);
         System.out
                 .println("\n                                                                                \r\n" + //
                         "                                                                                \r\n" + //
@@ -72,6 +80,7 @@ public class App {
                     System.out.println("┌───────────────────┐");
                     System.out.println("|  Quiz dimulai~~.  |");
                     System.out.println("└───────────────────┘");
+                    int benar = 0, salah = 0;
                     while (true) {
                         if (PilihanGanda.getJumlahSoal() > 0) {
                             System.out.println("\n┌────────────────────┐");
@@ -84,10 +93,12 @@ public class App {
                                 jawabanUser[i] = dataIn.readLine();
                                 if (jawabanUser[i].equalsIgnoreCase(pertanyaan[i].getJawaban())) {
                                     System.out.println("Good job! Jawaban kamu benar");
+                                    benar++;
                                 } else {
                                     System.out.println(
-                                            "Damn, u stpid asf. jawabannya adalah: "
+                                            "Kurang tepat! jawabannya adalah: "
                                                     + pertanyaan[i].getJawaban());
+                                    salah++;
                                 }
                             }
                         }
@@ -102,10 +113,12 @@ public class App {
                                 jawabanUser[i] = dataIn.readLine().toLowerCase();
                                 if (jawabanUser[i].contains(pertanyaan[i].getJawaban().toLowerCase())) {
                                     System.out.println("Good job! Jawaban kamu benar");
+                                    benar++;
                                 } else {
                                     System.out.println(
-                                            "Damn, u stpid asf. jawabannya adalah: "
+                                            "Kurang tepat! jawabannya adalah: "
                                                     + pertanyaan[i].getJawaban());
+                                    salah++;
                                 }
                             }
                         }
@@ -120,15 +133,18 @@ public class App {
                                 jawabanUser[i] = dataIn.readLine().toLowerCase();
                                 if (jawabanUser[i].equalsIgnoreCase(pertanyaan[i].getJawaban())) {
                                     System.out.println("Good job! Jawaban kamu benar");
+                                    benar++;
                                     // System.out.println(jawabanUser[i].);
                                 } else {
                                     System.out.println(
-                                            "Damn, u stpid asf. jawabannya adalah: "
+                                            "Kurang tepat! jawabannya adalah: "
                                                     + pertanyaan[i].getJawaban());
+                                    salah++;
                                 }
                             }
                         }
-
+                        System.out.println("\nBenar: " + benar);
+                        System.out.println("Salah: " + salah);
                         System.out.println("\nApakah kamu ingin mengulang Quiz? (y/n)");
                         System.out.print(": ");
                         String again = dataIn.readLine();
