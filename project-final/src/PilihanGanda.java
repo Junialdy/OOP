@@ -1,13 +1,8 @@
 public class PilihanGanda extends Soal {
     private static int jumlahSoal;
 
-    public PilihanGanda(String soal, String A, String B, String C, String D, String jawaban) {
-        pertanyaan = soal;
-        pilihan[0] = A;
-        pilihan[1] = B;
-        pilihan[2] = C;
-        pilihan[3] = D;
-        this.jawaban = jawaban;
+    public PilihanGanda(int id, String soal, String A, String B, String C, String D, String jawaban) {
+        super(id, soal, A, B, C, D, jawaban);
         jumlahSoal++;
     }
 

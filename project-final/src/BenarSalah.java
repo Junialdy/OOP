@@ -1,9 +1,8 @@
 public class BenarSalah extends Soal {
     private static int jumlahSoal;
 
-    public BenarSalah(String soal, Boolean jawaban) {
-        this.pertanyaan = soal;
-        this.jawaban = jawaban ? "benar" : "salah";
+    public BenarSalah(int id, String soal, Boolean jawaban) {
+        super(id, soal, jawaban);
         jumlahSoal++;
     }
 

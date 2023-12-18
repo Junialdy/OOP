@@ -1,9 +1,8 @@
 public class Essay extends Soal {
     private static int jumlahSoal;
 
-    public Essay(String soal, String jawaban) {
-        this.pertanyaan = soal;
-        this.jawaban = jawaban;
+    public Essay(int id, String soal, String jawaban) {
+        super(id, soal, jawaban);
         jumlahSoal++;
     }
 

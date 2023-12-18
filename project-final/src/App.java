@@ -1,31 +1,59 @@
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+import java.sql.*;
+import java.util.Random;
 
 public class App {
+    static final String JDBC_DRIVER = "com.mysql.cj.jdbc.Driver";
+    static final String DB_URL = "jdbc:mysql://localhost:3306/db_oop";
+    static final String USER = "root";
+    static final String PASS = "";
+
+    static Connection conn;
+    static Statement stmt;
+    static ResultSet rs;
+
     public static void main(String[] args) throws Exception {
+        // Array Of Object
         BufferedReader dataIn = new BufferedReader(new InputStreamReader(System.in));
         boolean stop = false;
         int max = 20;
         Soal pertanyaan[] = new Soal[max];
         String jawabanUser[] = new String[max];
-        pertanyaan[0] = new PilihanGanda("Apa tipe data untuk menyimpan bilangan pecahan (desimal) dalam Java?", "int",
-                "float", "double", "char",
-                "C");
-        pertanyaan[1] = new PilihanGanda("Bagaimana cara menginisialisasi array dalam Java?", "int arr[] = {1, 2, 3};",
-                "array arr = {1, 2, 3};", "int arr() = {1, 2, 3};", "array arr() = {1, 2, 3};", "A");
-        pertanyaan[2] = new PilihanGanda(
-                "Apa istilah yang digunakan untuk menggabungkan data dan metode dalam satu entitas dalam Java?",
-                "Encapsulation", "Inheritance", "Polymorphism", "Abstraction", "A");
-        pertanyaan[3] = new Essay("Apa keyword yang digunakan untuk membuat objek baru?",
-                "new");
-        pertanyaan[4] = new Essay("Apa keyword yang digunakan untuk membatasi inheritance?", "final");
-        pertanyaan[5] = new Essay("Apa keyword yang digunakan untuk melakukan inheritance?", "extends");
-        pertanyaan[6] = new BenarSalah("Tipe data String pada Java adalah tipe data primitif", false);
-        pertanyaan[7] = new BenarSalah(
-                "Blok finally dalam try-catch akan selalu dieksekusi, bahkan jika tidak ada exception", true);
-        pertanyaan[8] = new BenarSalah(
-                "Keyword static digunakan untuk mendeklarasikan variabel yang hanya dapat diakses melalui objek",
-                false);
+
+        try {
+            Class.forName(JDBC_DRIVER);
+
+            conn = DriverManager.getConnection(DB_URL, USER, PASS);
+
+            stmt = conn.createStatement();
+
+            rs = stmt.executeQuery("SELECT * FROM tb_soal");
+            int i = 0;
+            while (rs.next()) {
+                switch (rs.getString(8)) {
+                    case "pilihanganda":
+                        pertanyaan[i++] = new PilihanGanda(rs.getInt(1), rs.getString(2),
+                                rs.getString(3),
+                                rs.getString(4), rs.getString(5), rs.getString(6),
+                                rs.getString(7));
+                        break;
+                    case "essay":
+                        pertanyaan[i++] = new Essay(rs.getInt(1), rs.getString(2),
+                                rs.getString(7));
+                        break;
+                    case "benarsalah":
+                        boolean temp = rs.getString(7).equalsIgnoreCase("benar") ? true : false;
+                        pertanyaan[i++] = new BenarSalah(rs.getInt(1), rs.getString(2), temp);
+                        break;
+                    default:
+                        break;
+                }
+            }
+
+        } catch (Exception e) {
+            System.out.println(e);
+        }
         System.out
                 .println("\n                                                                                \r\n" + //
                         "                                                                                \r\n" + //
@@ -171,7 +199,7 @@ public class App {
                                 if (pertanyaan[i].getClass() != PilihanGanda.class || pertanyaan[i] == null)
                                     continue;
 
-                                System.out.println("\nID Soal: " + i);
+                                System.out.println("\nID Soal: " + pertanyaan[i].getId());
                                 pertanyaan[i].showQuestion();
                             } catch (NullPointerException e) {
                                 continue;
@@ -187,7 +215,7 @@ public class App {
                                 if (pertanyaan[i].getClass() != Essay.class || pertanyaan[i] == null)
                                     continue;
 
-                                System.out.println("\nID Soal: " + i);
+                                System.out.println("\nID Soal: " + pertanyaan[i].getId());
                                 pertanyaan[i].showQuestion();
                             } catch (NullPointerException e) {
                                 continue;
@@ -203,7 +231,7 @@ public class App {
                                 if (pertanyaan[i].getClass() != BenarSalah.class || pertanyaan[i] == null)
                                     continue;
 
-                                System.out.println("\nID Soal: " + i);
+                                System.out.println("\nID Soal: " + pertanyaan[i].getId());
                                 pertanyaan[i].showQuestion();
                             } catch (NullPointerException e) {
                                 continue;
@@ -232,6 +260,8 @@ public class App {
                         } finally {
                             System.out.println(); // add newline
                         }
+                        Random random = new Random();
+                        int id = random.nextInt(10000);
                         boolean doAgain = true;
                         switch (jenisSoal) {
                             case 1:
@@ -251,8 +281,15 @@ public class App {
                                     // check is jawban A / B / C / D
                                     int i = PilihanGanda.getJumlahSoal() + Essay.getJumlahSoal()
                                             + BenarSalah.getJumlahSoal();
-                                    pertanyaan[i] = new PilihanGanda(soal, pilihanA, pilihanB, pilihanC,
-                                            pilihanD, jawaban);
+                                    pertanyaan[i] = new PilihanGanda(id, soal, pilihanA, pilihanB, pilihanC, pilihanD,
+                                            jawaban);
+                                    String sql = "INSERT INTO tb_soal (id_soal, pertanyaan,pilihan1,pilihan2,pilihan3,pilihan4,jawaban,tipe) VALUES (%d,'%s','%s','%s','%s','%s','%s','pilihanganda')";
+                                    sql = String.format(sql, id, soal, pilihanA, pilihanB, pilihanC, pilihanD,
+                                            jawaban);
+                                    stmt.execute(sql);
+                                    System.out.println("\n┌────────────────────────────┐");
+                                    System.out.println("| Soal Berhasil Ditambahkan! |");
+                                    System.out.println("└────────────────────────────┘");
                                     System.out.println("\n1. Tambah Lagi");
                                     System.out.println("2. Jenis Lain");
                                     System.out.println("3. Ke Halaman Awal");
@@ -293,7 +330,10 @@ public class App {
                                     String jawaban = dataIn.readLine();
                                     int i = PilihanGanda.getJumlahSoal() + Essay.getJumlahSoal()
                                             + BenarSalah.getJumlahSoal();
-                                    pertanyaan[i] = new Essay(soal, jawaban);
+                                    pertanyaan[i] = new Essay(id, soal, jawaban);
+                                    String sql = "INSERT INTO tb_soal (id_soal, pertanyaan, jawaban, tipe) VALUES (%d,'%s','%s','essay')";
+                                    sql = String.format(sql, id, soal, jawaban);
+                                    stmt.execute(sql);
                                     System.out.println("\n1. Tambah Lagi");
                                     System.out.println("2. Jenis Lain");
                                     System.out.println("3. Ke Halaman Awal");
@@ -330,10 +370,13 @@ public class App {
                                     String soal = dataIn.readLine();
                                     System.out.print("Jawaban: ");
                                     String temp = dataIn.readLine();
-                                    Boolean jawaban = temp.toLowerCase() == "benar" ? true : false;
+                                    Boolean jawaban = temp.equalsIgnoreCase("benar") ? true : false;
                                     int i = PilihanGanda.getJumlahSoal() + Essay.getJumlahSoal()
                                             + BenarSalah.getJumlahSoal();
-                                    pertanyaan[i] = new BenarSalah(soal, jawaban);
+                                    pertanyaan[i] = new BenarSalah(id, soal, jawaban);
+                                    String sql = "INSERT INTO tb_soal (id_soal, pertanyaan, jawaban, tipe) VALUES (%d,'%s','%s','benarsalah')";
+                                    sql = String.format(sql, id, soal, temp);
+                                    stmt.execute(sql);
                                     System.out.println("\n1. Tambah Lagi");
                                     System.out.println("2. Jenis Lain");
                                     System.out.println("3. Ke Halaman Awal");
@@ -386,15 +429,22 @@ public class App {
                     while (doEditSoal) {
                         System.out.print("Masukkan ID Soal: ");
                         int idSoal = -1;
+                        int index = -1;
                         try {
                             idSoal = Integer.parseInt(dataIn.readLine());
-                            System.out.println("Soal Lama: " + pertanyaan[idSoal].getPertanyaan());
+                            for (int i = 0; i < pertanyaan.length; i++) {
+                                if (idSoal == pertanyaan[i].getId()) {
+                                    index = i;
+                                    break;
+                                }
+                            }
+                            System.out.println("Soal Lama: " + pertanyaan[index].getPertanyaan());
                         } catch (Exception e) {
                             System.out.println("Error! ID Soal tidak ditemukan.");
                             continue;
                         }
 
-                        if (pertanyaan[idSoal].getClass() == PilihanGanda.class) {
+                        if (pertanyaan[index].getClass() == PilihanGanda.class) {
                             System.out.print("Soal Baru: ");
                             String soal = dataIn.readLine();
                             System.out.print("A: ");
@@ -407,34 +457,43 @@ public class App {
                             String pilihanD = dataIn.readLine();
                             System.out.print("Jawaban (A/B/C/D): ");
                             String jawaban = dataIn.readLine().toUpperCase();
-                            pertanyaan[idSoal].setAll(soal, pilihanA, pilihanB, pilihanC, pilihanD, jawaban);
+                            pertanyaan[index].setAll(soal, pilihanA, pilihanB, pilihanC, pilihanD, jawaban);
+                            String sql = "UPDATE tb_soal SET pertanyaan='%s',pilihan1='%s',pilihan2='%s',pilihan3='%s',pilihan4='%s',jawaban='%s' WHERE id_soal=%d;";
+                            sql = String.format(sql, soal, pilihanA, pilihanB, pilihanC, pilihanD, jawaban, idSoal);
+                            stmt.execute(sql);
                             System.out.println("\n┌─────────────────────────┐");
                             System.out.println("|  Soal Berhasil diedit!  |");
                             System.out.println("└─────────────────────────┘");
                             doEditSoal = false;
-                        } else if (pertanyaan[idSoal].getClass() == Essay.class) {
+                        } else if (pertanyaan[index].getClass() == Essay.class) {
                             System.out.print("Soal Baru: ");
                             String soal = dataIn.readLine();
                             System.out.print("Jawaban: ");
                             String jawaban = dataIn.readLine().toLowerCase();
-                            pertanyaan[idSoal].setAll(soal, jawaban);
+                            pertanyaan[index].setAll(soal, jawaban);
+                            String sql = "UPDATE tb_soal SET pertanyaan='%s',jawaban='%s' WHERE id_soal=%d;";
+                            sql = String.format(sql, soal, jawaban, idSoal);
+                            stmt.execute(sql);
                             System.out.println("\n┌─────────────────────────┐");
                             System.out.println("|  Soal Berhasil diedit!  |");
                             System.out.println("└─────────────────────────┘");
                             doEditSoal = false;
-                        } else if (pertanyaan[idSoal].getClass() == BenarSalah.class) {
+                        } else if (pertanyaan[index].getClass() == BenarSalah.class) {
                             System.out.print("Soal Baru: ");
                             String soal = dataIn.readLine();
                             System.out.print("Jawaban (Benar/Salah): ");
                             String temp = dataIn.readLine();
-                            Boolean jawaban = temp.toLowerCase() == "benar" ? true : false;
-                            pertanyaan[idSoal].setAll(soal, jawaban);
+                            Boolean jawaban = temp.equalsIgnoreCase("benar") ? true : false;
+                            pertanyaan[index].setAll(soal, jawaban);
+                            String sql = "UPDATE tb_soal SET pertanyaan='%s',jawaban='%s' WHERE id_soal=%d;";
+                            sql = String.format(sql, soal, temp, idSoal);
+                            stmt.execute(sql);
                             System.out.println("\n┌─────────────────────────┐");
                             System.out.println("|  Soal Berhasil diedit!  |");
                             System.out.println("└─────────────────────────┘");
                             doEditSoal = false;
                         } else {
-                            System.out.println("\nPertanyaan dengan Class \"" + pertanyaan[idSoal].getClass()
+                            System.out.println("\nPertanyaan dengan Class \"" + pertanyaan[index].getClass()
                                     + "\" tidak dapat diubah!");
                         }
                     }
@@ -448,9 +507,16 @@ public class App {
                     while (doDeleteSoal) {
                         System.out.print("\nMasukkan ID Soal: ");
                         int idSoal = -1;
+                        int index = -1;
                         try {
                             idSoal = Integer.parseInt(dataIn.readLine());
-                            if (pertanyaan[idSoal] == null)
+                            for (int i = 0; i < pertanyaan.length; i++) {
+                                if (idSoal == pertanyaan[i].getId()) {
+                                    index = i;
+                                    break;
+                                }
+                            }
+                            if (pertanyaan[index] == null)
                                 throw new Exception();
                         } catch (Exception e) {
                             System.out.println("┌─────────────────────────────────┐");
@@ -464,16 +530,16 @@ public class App {
                             }
                             continue;
                         }
-                        if (pertanyaan[idSoal].getClass() == PilihanGanda.class) {
+                        if (pertanyaan[index].getClass() == PilihanGanda.class) {
                             PilihanGanda.removeSoal();
-                        } else if (pertanyaan[idSoal].getClass() == Essay.class) {
+                        } else if (pertanyaan[index].getClass() == Essay.class) {
                             Essay.removeSoal();
-                        } else if (pertanyaan[idSoal].getClass() == BenarSalah.class) {
+                        } else if (pertanyaan[index].getClass() == BenarSalah.class) {
                             BenarSalah.removeSoal();
                         }
                         Soal temp[] = new Soal[max];
                         for (int i = 0, k = 0; i < pertanyaan.length; i++) {
-                            if (pertanyaan[i] == null || i == idSoal) {
+                            if (pertanyaan[i] == null || i == index) {
                                 continue;
                             } else {
                                 temp[k++] = pertanyaan[i];
@@ -481,6 +547,10 @@ public class App {
                         }
 
                         pertanyaan = temp;
+                        // DELETE FROM tb_soal WHERE id_soal=9805;
+                        String sql = "DELETE FROM tb_soal WHERE id_soal=%d";
+                        sql = String.format(sql, idSoal);
+                        stmt.execute(sql);
                         doDeleteSoal = false;
                     }
                     System.out.println("┌────────────────────────┐");
@@ -490,6 +560,8 @@ public class App {
                 case 6:
                     System.out.println("\nGood bye~~\n");
                     stop = true;
+                    stmt.close();
+                    conn.close();
                     break;
 
                 default:
@@ -499,5 +571,6 @@ public class App {
                     break;
             }
         }
+
     }
 }
